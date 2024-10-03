@@ -56,6 +56,8 @@ android {
     }
 
     testOptions {
+        execution = "ANDROID_TEST_ORCHESTRATOR"
+
         unitTests.all {
             it.testLogging {
                 exceptionFormat = TestExceptionFormat.FULL
@@ -81,6 +83,8 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.runner)
+    androidTestUtil(libs.androidx.orchestrator)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
