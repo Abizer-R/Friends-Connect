@@ -20,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -85,25 +84,39 @@ private fun PasswordField(
     onValueChange: (String) -> Unit
 ) {
     var isVisible by remember { mutableStateOf(false) }
+    val visualTransformation = if (isVisible) {
+        VisualTransformation.None
+    } else PasswordVisualTransformation()
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = value,
         trailingIcon = {
-            IconButton(
-                onClick = { isVisible = isVisible.not() }
-            ) {
-                Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_visibility),
-                    contentDescription = stringResource(R.string.toggleVisiblity)
-                )
+            ToggleVisibilityIcon(isVisible) {
+                isVisible = isVisible.not()
             }
         },
-        visualTransformation = if (isVisible) {
-            VisualTransformation.None
-        } else PasswordVisualTransformation(),
+        visualTransformation = visualTransformation,
         label = { Text(text = stringResource(R.string.password)) },
         onValueChange = onValueChange
     )
+}
+
+@Composable
+private fun ToggleVisibilityIcon(
+    isVisible: Boolean,
+    onToggle: () -> Unit
+) {
+    val imageVector = ImageVector.vectorResource(
+        if (isVisible) R.drawable.ic_visibility_on else R.drawable.ic_visibility_off
+    )
+    IconButton(
+        onClick = { onToggle() }
+    ) {
+        Image(
+            imageVector = imageVector,
+            contentDescription = stringResource(R.string.toggleVisiblity)
+        )
+    }
 }
 
 @Composable
