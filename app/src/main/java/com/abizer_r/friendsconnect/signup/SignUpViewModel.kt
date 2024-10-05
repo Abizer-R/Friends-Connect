@@ -1,0 +1,30 @@
+package com.abizer_r.friendsconnect.signup
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.abizer_r.friendsconnect.domain.validation.CredentialsValidationResult
+import com.abizer_r.friendsconnect.domain.validation.RegexCredentialsValidator
+import com.abizer_r.friendsconnect.signup.state.SignUpState
+
+class SignUpViewModel {
+
+    private val credentialsValidator = RegexCredentialsValidator()
+
+    private val _mutableSignUpState = MutableLiveData<SignUpState>()
+    val signUpState: LiveData<SignUpState> = _mutableSignUpState
+
+    fun createAccount(
+        email: String,
+        password: String,
+        about: String
+    ) {
+        val state = when (credentialsValidator.validate(email, password)) {
+            CredentialsValidationResult.InvalidEmail -> SignUpState.BadEmail
+            CredentialsValidationResult.InvalidPassword -> SignUpState.BadPassword
+            CredentialsValidationResult.Valid -> SignUpState.Valid
+        }
+        _mutableSignUpState.value = state
+    }
+
+
+}
