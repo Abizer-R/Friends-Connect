@@ -17,13 +17,11 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
 
-        testInstrumentationRunner = "org.junit.runners.JUnit4" // Use JUnit 4 for instrumentation tests
-        testInstrumentationRunnerArgument("runnerBuilder", "de.mannodermaus.junit5.AndroidJUnit5Builder") // Use JUnit 5 for local unit tests
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" // Use JUnit 4 for instrumentation tests
     }
 
     buildTypes {
@@ -63,7 +61,7 @@ android {
         execution = "ANDROID_TEST_ORCHESTRATOR"
 
         unitTests.all {
-            it.useJUnitPlatform()
+            it.useJUnitPlatform()   // Use JUnit5 for unit tests
             it.testLogging {
                 exceptionFormat = TestExceptionFormat.FULL
                 events("passed", "failed", "skipped", "standardOut", "standardError")
@@ -83,21 +81,25 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-//    testImplementation(libs.junit)
+
+    // Instrumentation tests (JUnit 4)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.runner)
     androidTestUtil(libs.androidx.orchestrator)
+
+    // Debug dependencies
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // (Required) Writing and executing Unit Tests on the JUnit Platform
+    // Unit tests with JUnit 5
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
 
+    // Testing Architecture Components
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
 }
