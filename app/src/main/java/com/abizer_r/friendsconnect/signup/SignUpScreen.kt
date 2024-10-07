@@ -28,20 +28,37 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.abizer_r.friendsconnect.R
 import com.abizer_r.friendsconnect.domain.user.UserRepository
 import com.abizer_r.friendsconnect.signup.state.SignUpState
 import com.abizer_r.friendsconnect.ui.theme.FriendsConnectTheme
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SignUp(
+fun SignUpScreen(
     modifier: Modifier = Modifier,
-    onSignedUp: () -> Unit
+    signUpViewModel: SignUpViewModel = koinViewModel<SignUpViewModel>(),
+    onSignedUp: () -> Unit,
 ) {
-
-    val signUpViewModel = SignUpViewModel(UserRepository())
-
     val signUpState by signUpViewModel.signUpState.observeAsState()
+    SignUpView(
+        modifier = modifier,
+        signUpState = signUpState ?: SignUpState.Default,
+        onSignedUp = onSignedUp,
+        onCreateAccountClicked = { email, password, about ->
+            signUpViewModel.createAccount(email, password, "empty about")
+        }
+    )
+}
+
+@Composable
+fun SignUpView(
+    modifier: Modifier = Modifier,
+    signUpState: SignUpState,
+    onSignedUp: () -> Unit,
+    onCreateAccountClicked: (email: String, password: String, about: String) -> Unit,
+) {
 
     if (signUpState is SignUpState.SignedUp) {
         onSignedUp()
@@ -77,7 +94,7 @@ fun SignUp(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                signUpViewModel.createAccount(email, password, "empty about")
+                onCreateAccountClicked(email, password, about)
             }
         ) {
             Text(text = stringResource(R.string.signUp))
@@ -176,8 +193,10 @@ private fun ScreenTitle(
 @Preview(device = Devices.PIXEL_4, showBackground = true)
 fun SignUpPreview() {
     FriendsConnectTheme {
-        SignUp(
-            onSignedUp = {}
+        SignUpView(
+            signUpState = SignUpState.Default,
+            onSignedUp = {},
+            onCreateAccountClicked = {_, _, _ -> }
         )
     }
 }
