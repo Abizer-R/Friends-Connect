@@ -14,6 +14,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,14 +29,26 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.abizer_r.friendsconnect.R
+import com.abizer_r.friendsconnect.domain.user.UserRepository
+import com.abizer_r.friendsconnect.signup.state.SignUpState
 import com.abizer_r.friendsconnect.ui.theme.FriendsConnectTheme
 
 @Composable
 fun SignUp(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSignedUp: () -> Unit
 ) {
+
+    val signUpViewModel = SignUpViewModel(UserRepository())
+
+    val signUpState by signUpViewModel.signUpState.observeAsState()
+
+    if (signUpState is SignUpState.SignedUp) {
+        onSignedUp()
+    }
+
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -58,7 +71,9 @@ fun SignUp(
 
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = {}
+            onClick = {
+                signUpViewModel.createAccount(email, password, "empty about")
+            }
         ) {
             Text(text = stringResource(R.string.signUp))
         }
@@ -133,6 +148,8 @@ private fun ScreenTitle(
 @Preview(device = Devices.PIXEL_4, showBackground = true)
 fun SignUpPreview() {
     FriendsConnectTheme {
-        SignUp()
+        SignUp(
+            onSignedUp = {}
+        )
     }
 }
