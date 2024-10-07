@@ -57,6 +57,7 @@ fun SignUp(
         Spacer(modifier = Modifier.height(16.dp))
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
+        var about by remember { mutableStateOf("") }
         EmailField(
             value = email,
             onValueChange = { email = it }
@@ -66,7 +67,11 @@ fun SignUp(
             value = password,
             onValueChange = { password = it }
         )
-
+        Spacer(modifier = Modifier.height(8.dp))
+        AboutField(
+            value = about,
+            onValueChange = { about = it }
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
@@ -132,6 +137,29 @@ private fun ToggleVisibilityIcon(
             contentDescription = stringResource(R.string.toggleVisiblity)
         )
     }
+}
+
+@Composable
+private fun AboutField(
+    value: String,
+    onValueChange: (String) -> Unit
+) {
+    var isVisible by remember { mutableStateOf(false) }
+    val visualTransformation = if (isVisible) {
+        VisualTransformation.None
+    } else PasswordVisualTransformation()
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth(),
+        value = value,
+        trailingIcon = {
+            ToggleVisibilityIcon(isVisible) {
+                isVisible = isVisible.not()
+            }
+        },
+        visualTransformation = visualTransformation,
+        label = { Text(text = stringResource(R.string.about)) },
+        onValueChange = onValueChange
+    )
 }
 
 @Composable
