@@ -1,6 +1,8 @@
 package com.abizer_r.friendsconnect.signup
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,12 +27,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.abizer_r.friendsconnect.R
-import com.abizer_r.friendsconnect.domain.user.UserRepository
 import com.abizer_r.friendsconnect.signup.state.SignUpState
 import com.abizer_r.friendsconnect.ui.theme.FriendsConnectTheme
 import org.koin.androidx.compose.koinViewModel
@@ -38,7 +39,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SignUpScreen(
     modifier: Modifier = Modifier,
-    signUpViewModel: SignUpViewModel = koinViewModel<SignUpViewModel>(),
+    signUpViewModel: SignUpViewModel = koinViewModel(),
     onSignedUp: () -> Unit,
 ) {
     val signUpState by signUpViewModel.signUpState.observeAsState()
@@ -64,46 +65,80 @@ fun SignUpView(
         onSignedUp()
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        ScreenTitle(stringResource(R.string.create_an_account))
-        Spacer(modifier = Modifier.height(16.dp))
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
-        var about by remember { mutableStateOf("") }
-        EmailField(
-            value = email,
-            onValueChange = { email = it }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        PasswordField(
-            value = password,
-            onValueChange = { password = it }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        AboutField(
-            value = about,
-            onValueChange = { about = it }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                onCreateAccountClicked(email, password, about)
-            }
+    Box(modifier = modifier) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = stringResource(R.string.signUp))
+            ScreenTitle(stringResource(R.string.create_an_account))
+            Spacer(modifier = Modifier.height(16.dp))
+            var email by remember { mutableStateOf("") }
+            var password by remember { mutableStateOf("") }
+            var about by remember { mutableStateOf("") }
+            EmailField(
+                value = email,
+                onValueChange = { email = it }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            PasswordField(
+                value = password,
+                onValueChange = { password = it }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            AboutField(
+                value = about,
+                onValueChange = { about = it }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    onCreateAccountClicked(email, password, about)
+                }
+            ) {
+                Text(text = stringResource(R.string.signUp))
+            }
+        }
+
+        if (signUpState is SignUpState.DuplicateAccount) {
+            ErrorMessageBox(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                errorText = stringResource(R.string.duplicateAccountError)
+            )
         }
     }
 }
 
 @Composable
-private fun EmailField(
+fun ErrorMessageBox(
+    modifier: Modifier = Modifier,
+    errorText: String
+) {
+    Box(
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.errorContainer)
+            .padding(16.dp)
+    ) {
+        Text(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.errorContainer)
+                .align(Alignment.Center),
+            text = errorText,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.Center
+            )
+        )
+    }
+}
+
+@Composable
+fun EmailField(
     value: String,
     onValueChange: (String) -> Unit
 ) {
@@ -116,7 +151,7 @@ private fun EmailField(
 }
 
 @Composable
-private fun PasswordField(
+fun PasswordField(
     value: String,
     onValueChange: (String) -> Unit
 ) {
@@ -139,7 +174,7 @@ private fun PasswordField(
 }
 
 @Composable
-private fun ToggleVisibilityIcon(
+fun ToggleVisibilityIcon(
     isVisible: Boolean,
     onToggle: () -> Unit
 ) {
@@ -157,7 +192,7 @@ private fun ToggleVisibilityIcon(
 }
 
 @Composable
-private fun AboutField(
+fun AboutField(
     value: String,
     onValueChange: (String) -> Unit
 ) {
@@ -180,7 +215,7 @@ private fun AboutField(
 }
 
 @Composable
-private fun ScreenTitle(
+fun ScreenTitle(
     titleString: String
 ) {
     Text(
@@ -195,6 +230,18 @@ fun SignUpPreview() {
     FriendsConnectTheme {
         SignUpView(
             signUpState = SignUpState.Default,
+            onSignedUp = {},
+            onCreateAccountClicked = {_, _, _ -> }
+        )
+    }
+}
+
+@Composable
+@Preview(device = Devices.PIXEL_4, showBackground = true)
+fun DuplicateAccountInfoPreview() {
+    FriendsConnectTheme {
+        SignUpView(
+            signUpState = SignUpState.DuplicateAccount,
             onSignedUp = {},
             onCreateAccountClicked = {_, _, _ -> }
         )
