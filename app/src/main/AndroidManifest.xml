@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FriendsConnect"
         tools:targetApi="31">
+
+        <uses-library android:name="android.test.runner" android:required="false"/>
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
