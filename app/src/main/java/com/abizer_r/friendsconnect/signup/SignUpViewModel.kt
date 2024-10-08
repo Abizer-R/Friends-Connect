@@ -2,19 +2,23 @@ package com.abizer_r.friendsconnect.signup
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.abizer_r.friendsconnect.domain.user.UserRepository
+import androidx.lifecycle.ViewModel
+import com.abizer_r.friendsconnect.domain.user.repository.UserRepository
 import com.abizer_r.friendsconnect.domain.validation.CredentialsValidationResult
 import com.abizer_r.friendsconnect.domain.validation.RegexCredentialsValidator
 import com.abizer_r.friendsconnect.signup.state.SignUpState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class SignUpViewModel(
+@HiltViewModel
+class SignUpViewModel @Inject constructor(
     private val userRepository: UserRepository
-) {
+) : ViewModel() {
 
 
     private val credentialsValidator = RegexCredentialsValidator()
 
-    private val _mutableSignUpState = MutableLiveData<SignUpState>()
+    private val _mutableSignUpState = MutableLiveData<SignUpState>(SignUpState.Default)
     val signUpState: LiveData<SignUpState> = _mutableSignUpState
 
     fun createAccount(
