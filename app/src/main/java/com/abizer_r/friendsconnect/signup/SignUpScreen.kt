@@ -31,15 +31,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.abizer_r.friendsconnect.R
 import com.abizer_r.friendsconnect.signup.state.SignUpState
 import com.abizer_r.friendsconnect.ui.theme.FriendsConnectTheme
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SignUpScreen(
     modifier: Modifier = Modifier,
-    signUpViewModel: SignUpViewModel = koinViewModel(),
+    signUpViewModel: SignUpViewModel = hiltViewModel(),
     onSignedUp: () -> Unit,
 ) {
     val signUpState by signUpViewModel.signUpState.observeAsState()

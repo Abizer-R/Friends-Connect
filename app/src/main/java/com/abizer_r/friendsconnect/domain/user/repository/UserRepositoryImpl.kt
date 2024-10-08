@@ -1,16 +1,16 @@
-package com.abizer_r.friendsconnect.domain.user
+package com.abizer_r.friendsconnect.domain.user.repository
 
-import android.util.Log
 import com.abizer_r.friendsconnect.domain.exceptions.DuplicateAccountException
+import com.abizer_r.friendsconnect.domain.user.User
 import com.abizer_r.friendsconnect.signup.state.SignUpState
+import javax.inject.Inject
 
-class UserRepository(
-    val inMemoryUserCatalog: InMemoryUserCatalog = InMemoryUserCatalog(),
-    val num: Int = -1
-) {
+class UserRepositoryImpl @Inject constructor(
+    private val inMemoryUserCatalog: InMemoryUserCatalog,
+): UserRepository {
 
 
-    fun signUp(
+    override fun signUp(
         email: String,
         password: String,
         about: String
@@ -24,7 +24,6 @@ class UserRepository(
     }
 
     private fun createUser(email: String, password: String, about: String): User {
-        Log.e("TEST_repo", "createUser: num = $num", )
         if (inMemoryUserCatalog.contains(email)) {
             throw DuplicateAccountException()
         } else inMemoryUserCatalog.add(email)
@@ -32,10 +31,4 @@ class UserRepository(
         val userId = email.takeWhile { it != '@' } + "Id"
         return User(userId, email, about)
     }
-}
-
-class InMemoryUserCatalog {
-    private val emailSet: MutableSet<String> = hashSetOf()
-    fun contains(email: String) = emailSet.contains(email)
-    fun add(email: String) { emailSet.add(email) }
 }

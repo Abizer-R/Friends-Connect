@@ -17,7 +17,9 @@ import com.abizer_r.friendsconnect.MainActivity.Destinations.TIMELINE_ROUTE
 import com.abizer_r.friendsconnect.signup.SignUpScreen
 import com.abizer_r.friendsconnect.timeline.Timeline
 import com.abizer_r.friendsconnect.ui.theme.FriendsConnectTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     object Destinations {

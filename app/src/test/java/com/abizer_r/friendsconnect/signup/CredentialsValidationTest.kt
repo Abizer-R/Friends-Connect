@@ -1,7 +1,8 @@
 package com.abizer_r.friendsconnect.signup
 
 import com.abizer_r.friendsconnect.InstantTaskExecutorExtension
-import com.abizer_r.friendsconnect.domain.user.UserRepository
+import com.abizer_r.friendsconnect.domain.user.repository.InMemoryUserCatalog
+import com.abizer_r.friendsconnect.domain.user.repository.UserRepositoryImpl
 import com.abizer_r.friendsconnect.signup.state.SignUpState
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -16,7 +17,8 @@ class CredentialsValidationTest {
 
     private val validEmail = "valid@email.com"
     private val validPassword = "abcDEF123@#"
-    private val viewModel = SignUpViewModel(UserRepository())
+    private val inMemoryUserCatalog = InMemoryUserCatalog()
+    private val viewModel = SignUpViewModel(UserRepositoryImpl(inMemoryUserCatalog))
 
     @ParameterizedTest
     @CsvSource(
